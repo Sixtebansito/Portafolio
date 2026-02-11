@@ -1,0 +1,10 @@
+{
+    icon && (
+      <Icon
+        name={icon}
+        class="icon"
+        size={`${size === "sm" ? "1.4rem" : "2rem"}`}
+        color={iconColor}
+      />
+    )
+  }

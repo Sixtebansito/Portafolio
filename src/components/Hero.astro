@@ -1,0 +1,98 @@
+---
+import carro from "../assets/carro.svg";
+import search from "../assets/search.svg";
+---
+
+<div class="relative z-10 w-full max-w-4xl px-6 text-center pt-10 md:pt-10 pb-10 md:pb-10 mx-auto">
+    
+    <h1 class="text-6xl md:text-8xl font-bold tracking-tighter mb-6">
+        <span class="text-white flex items-center justify-center gap-4 flex-wrap">
+            Consulta 
+            <span class="relative inline-flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-2xl bg-linear-to-br from-yellow-400 via-blue-500 to-red-500 shadow-lg shadow-yellow-500/20 rotate-3 border border-white/10">
+                <img src={carro.src} alt="Icono de auto" class="w-8 h-8">
+            </span>
+            Rápido
+        </span>
+        <span class="block text-zinc-700 mt-2">Valores vehiculares</span>
+    </h1>
+
+    <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Encuentra rápidamente los valores de matriculación, prefectura y multas de la ANT para tu vehículo.
+    </p>
+
+    <div class="relative max-w-xl mx-auto mb-8 group">
+        <div class="absolute -inset-0.5 bg-linear-to-r from-zinc-700 to-zinc-700 rounded-xl opacity-50 group-hover:opacity-100 transition duration-500 blur-[1px]"></div>
+        
+        <div class="relative bg-[#0F0F0F] rounded-xl flex items-center px-4 py-6 border border-zinc-800 shadow-2xl focus-within:border-blue-500/50 transition-colors">
+            <img src={search.src} alt="" class="w-5 h-5 text-zinc-500 mr-3" aria-hidden="true">
+            
+            <input 
+                id="input-busqueda"
+                type="text" 
+                placeholder="Ingresa placa (ej: PBH1234)"
+                maxlength="7"
+                class="bg-transparent w-full text-white outline-none placeholder-zinc-500 text-sm md:text-base uppercase"
+                aria-label="Ingresa tu placa"
+            >
+            
+            <button 
+                id="btn-buscar" 
+                class="text-zinc-500 text-sm cursor-pointer md:text-base hover:text-white transition-colors focus:outline-none focus:text-white"
+                aria-label="Buscar placa"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btn = document.getElementById('btn-buscar');
+    const input = document.getElementById('input-busqueda');
+
+    const ejecutarBusqueda = () => {
+        if (!input || !(input instanceof HTMLInputElement)) return;
+        
+        const placa = input.value.trim().toUpperCase();
+        
+        if (placa.length < 6) {
+            input.classList.add('placeholder-red-400');
+            return;
+        }
+
+
+        const eventoBusqueda = new CustomEvent('buscarPlaca', { 
+            detail: { placa: placa } 
+        });
+        document.dispatchEvent(eventoBusqueda);
+
+        const seccionResultados = document.getElementById('resultados');
+        
+        if (seccionResultados) {
+            seccionResultados.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            window.scrollBy({ top: 1000, behavior: "smooth" });
+        }
+
+        input.blur();
+    };
+
+    if (btn) {
+        btn.addEventListener('click', ejecutarBusqueda);
+    }
+
+    if (input) {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                ejecutarBusqueda();
+            }
+        });
+        
+        input.addEventListener('input', (event) => {
+            const target = event.target as HTMLInputElement;
+            target.value = target.value.toUpperCase();
+        });
+    }
+</script>

@@ -1,0 +1,130 @@
+---
+import AMT from '../assets/AMT.png';
+import Prefectura from '../assets/Prefectura.png';
+import SRI from '../assets/SRI.webp';
+
+const CARDS_CONFIG = [
+    {
+        id: "amt", 
+        title: "Multas AMT",
+        icon: AMT.src,
+        color: "bg-blue-500/10",
+        link: "https://servicios.axiscloud.ec/AutoServicio/inicio.jsp?ps_empresa=03&ps_accion=P55"
+    },
+    {
+        id: "prefectura",
+        title: "Valores Prefectura",
+        icon: Prefectura.src,
+        color: "bg-orange-500/10",
+        link: "https://www.prefectura.gob.ec/"
+    },
+    {
+        id: "sri",
+        title: "Valores Matriculación",
+        icon: SRI.src,
+        color: "bg-red-500/10",
+        link: "https://www.sri.gob.ec/"
+    },
+];
+---
+
+<section id="resultados" class="hidden opacity-0 transition-opacity duration-700 ease-in-out pt-10">
+    
+    <div class="flex justify-center mb-10 pb-30">
+        <div class="relative">
+            <h1 id="display-placa" class="relative text-5xl md:text-7xl font-bold tracking-widest text-white font-mono uppercase px-4 py-2 bg-[#121212] rounded-lg border border-white/10">
+                ---
+            </h1>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto w-full max-w-6xl px-4">
+        {CARDS_CONFIG.map(({ id, title, icon, color, link }) => (
+            <a href={link} target="_blank" rel="noopener noreferrer" class="block group h-full">
+                <div class="relative h-full flex flex-col justify-between p-6 rounded-2xl bg-[#121212] border border-zinc-800 hover:border-zinc-500 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-900/10">
+                    
+                    <div>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class={`p-3 rounded-xl ${color} border border-white/5 backdrop-blur-sm`}>
+                                <img src={icon} alt={title} class="w-8 h-8 object-contain" />
+                            </div>
+                            <h3 class="text-zinc-400 text-sm font-medium uppercase tracking-wider">{title}</h3>
+                        </div>
+
+                        <div class="flex items-baseline gap-1">
+                            <p class="text-4xl font-bold text-white tracking-tight" id={`value-${id}`}>
+                                $0.00
+                            </p>
+                            <span class="text-sm text-zinc-500 animate-pulse hidden" id={`loading-${id}`}>...</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex items-center justify-between border-t border-zinc-800/50 pt-4 group-hover:border-zinc-600/50 transition-colors">
+                        <span class="text-xs text-zinc-500 group-hover:text-white transition-colors font-medium">Consultar fuente oficial</span>
+                        
+                        <div class="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 group-hover:bg-white group-hover:text-black transition-all duration-300 transform group-hover:rotate-45">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+            </a>
+        ))}
+    </div>
+</section>
+
+<script>
+    document.addEventListener('buscarPlaca', ((e: CustomEvent) => {
+        const seccion = document.getElementById('resultados');
+        const displayPlaca = document.getElementById('display-placa');
+        const placa = e.detail.placa;
+
+        if (seccion && displayPlaca) {
+            seccion.classList.remove('hidden');
+            setTimeout(() => {
+                seccion.classList.remove('opacity-0');
+            }, 10);
+
+            displayPlaca.innerText = placa;
+
+            actualizarValores(placa);
+        }
+    }) as EventListener);
+
+    function actualizarValores(placa: string) {
+        const ids = ['amt', 'prefectura', 'sri'];
+        
+        ids.forEach(id => {
+            const elValor = document.getElementById(`value-${id}`);
+            const elLoading = document.getElementById(`loading-${id}`);
+            if(elValor) elValor.innerText = ""; 
+            if(elLoading) elLoading.classList.remove('hidden'); 
+        });
+
+        setTimeout(() => {
+            const datosSimulados = {
+                amt: (Math.random() * 100).toFixed(2),
+                prefectura: (Math.random() * 200 + 50).toFixed(2),
+                sri: (Math.random() * 200 + 50).toFixed(2)
+            };
+
+            ids.forEach(id => {
+                const elValor = document.getElementById(`value-${id}`);
+                const elLoading = document.getElementById(`loading-${id}`);
+                
+                if(elLoading) elLoading.classList.add('hidden');
+                
+                if(elValor) {
+                    // @ts-ignore
+                    elValor.innerText = `$${datosSimulados[id]}`;
+                    
+                    elValor.classList.add('text-green-400');
+                    setTimeout(() => elValor.classList.remove('text-green-400'), 500);
+                }
+            });
+
+        }, 1500);
+    }
+</script>
