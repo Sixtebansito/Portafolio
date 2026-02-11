@@ -9,3 +9,9 @@ export default defineConfig({
     plugins: [tailwindcss()]
   }
 });
+
+
+export default defineConfig({
+  site: 'https://sixtebansito.gihub.io',
+  base: '/sixtebansito.gihub.io',
+});
